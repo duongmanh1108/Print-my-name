@@ -1,19 +1,9 @@
-FROM ubuntu:latest
-MAINTAINER duongnm
+FROM alpine:3.3
 
-# Add crontab file in the cron directory
-ADD crontab /etc/cron.d/print-myname
+ADD crontab.txt /crontab.txt
+ADD script.sh /script.sh
+COPY entry.sh /entry.sh
+RUN chmod 755 /script.sh /entry.sh
+RUN /usr/bin/crontab /crontab.txt
 
-# Give execution rights on the cron job
-RUN chmod 0644 /etc/cron.d/print-myname
-
-# Create the log file to be able to run tail
-RUN touch /var/log/cron.log
-
-#Install Cron
-RUN apt-get update
-RUN apt-get -y install cron
-
-
-# Run the command on container startup
-CMD cron && tail -f /var/log/cron.log
+CMD ["/entry.sh"]
